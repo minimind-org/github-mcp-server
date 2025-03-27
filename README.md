@@ -1,4 +1,5 @@
 # GitHub MCP Server
+**Important**: This project is a fork from [modelcontextprotocol/servers/src/github](https://github.com/modelcontextprotocol/servers/tree/main/src/github).  
 
 MCP Server for the GitHub API, enabling file operations, repository management, search functionality, and more.
 
