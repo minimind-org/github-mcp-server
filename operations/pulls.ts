@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { githubRequest } from "../common/utils.js";
+import { githubRequest } from "../common/utils";
 import {
   GitHubPullRequestSchema,
   GitHubIssueAssigneeSchema,
   GitHubRepositorySchema,
-} from "../common/types.js";
+} from "../common/types";
 
 // Schema definitions
 export const PullRequestFileSchema = z.object({

@@ -1,20 +1,20 @@
 #!/usr/bin/env node
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { Server } from "@modelcontextprotocol/sdk/server/index";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-} from "@modelcontextprotocol/sdk/types.js";
+} from "@modelcontextprotocol/sdk/types";
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
-import * as repository from './operations/repository.js';
-import * as files from './operations/files.js';
-import * as issues from './operations/issues.js';
-import * as pulls from './operations/pulls.js';
-import * as branches from './operations/branches.js';
-import * as search from './operations/search.js';
-import * as commits from './operations/commits.js';
+import * as repository from './operations/repository';
+import * as files from './operations/files';
+import * as issues from './operations/issues';
+import * as pulls from './operations/pulls';
+import * as branches from './operations/branches';
+import * as search from './operations/search';
+import * as commits from './operations/commits';
 import {
   GitHubError,
   GitHubValidationError,
@@ -24,8 +24,8 @@ import {
   GitHubRateLimitError,
   GitHubConflictError,
   isGitHubError,
-} from './common/errors.js';
-import { VERSION } from "./common/version.js";
+} from './common/errors';
+import { VERSION } from "./common/version";
 
 const server = new Server(
   {
