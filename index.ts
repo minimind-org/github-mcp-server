@@ -8,13 +8,13 @@ import {
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
-import * as repository from './operations/repository.js';
-import * as files from './operations/files.js';
-import * as issues from './operations/issues.js';
-import * as pulls from './operations/pulls.js';
-import * as branches from './operations/branches.js';
-import * as search from './operations/search.js';
-import * as commits from './operations/commits.js';
+import * as repository from './operations/repository';
+import * as files from './operations/files';
+import * as issues from './operations/issues';
+import * as pulls from './operations/pulls';
+import * as branches from './operations/branches';
+import * as search from './operations/search';
+import * as commits from './operations/commits';
 import {
   GitHubError,
   GitHubValidationError,
@@ -24,8 +24,8 @@ import {
   GitHubRateLimitError,
   GitHubConflictError,
   isGitHubError,
-} from './common/errors.js';
-import { VERSION } from "./common/version.js";
+} from './common/errors';
+import { VERSION } from "./common/version";
 
 const server = new Server(
   {
@@ -161,8 +161,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: zodToJsonSchema(pulls.ListPullRequestsSchema)
       },
       {
-        name: "create_pull_request_review",
-        description: "Create a review on a pull request",
+        name: "comment_on_pull_request",
+        description: "Add a comment to a pull request",
+        inputSchema: zodToJsonSchema(pulls.CommentOnPullRequestSchema)
+      },
+      {
+        name: "submit_pull_request_review",
+        description: "Submit a formal review for a pull request with approval status and comments",
         inputSchema: zodToJsonSchema(pulls.CreatePullRequestReviewSchema)
       },
       {
@@ -397,14 +402,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      case "create_pull_request_review": {
-        const args = pulls.CreatePullRequestReviewSchema.parse(request.params.arguments);
-        const { owner, repo, pull_number, ...options } = args;
-        const review = await pulls.createPullRequestReview(owner, repo, pull_number, options);
+      case "comment_on_pull_request": {
+        const args = pulls.CommentOnPullRequestSchema.parse(request.params.arguments);
+        const comment = await pulls.commentOnPullRequest(
+          args.owner,
+          args.repo,
+          args.pull_number,
+          args.body
+        );
         return {
-          content: [{ type: "text", text: JSON.stringify(review, null, 2) }],
+          content: [{ type: "text", text: JSON.stringify(comment, null, 2) }],
         };
       }
+
+      // case "submit_pull_request_review": {
+      //   const args = pulls.CreatePullRequestReviewSchema.parse(request.params.arguments);
+      //   const { owner, repo, pull_number, ...options } = args;
+      //   const review = await pulls.submitPullRequestReview(
+      //     owner,
+      //     repo,
+      //     pull_number,
+      //     options
+      //   );
+      //   return {
+      //     content: [{ type: "text", text: JSON.stringify(review, null, 2) }],
+      //   };
+      // }
 
       case "merge_pull_request": {
         const args = pulls.MergePullRequestSchema.parse(request.params.arguments);

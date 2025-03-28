@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { githubRequest } from "../common/utils.js";
-import { GitHubRepositorySchema, GitHubSearchResponseSchema } from "../common/types.js";
+import { githubRequest } from "../common/utils";
+import { GitHubRepositorySchema, GitHubSearchResponseSchema } from "../common/types";
 
 // Schema definitions
 export const CreateRepositoryOptionsSchema = z.object({

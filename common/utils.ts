@@ -1,8 +1,5 @@
-import { getUserAgent } from "universal-user-agent";
-import { createGitHubError } from "./errors.js";
-import { VERSION } from "./version.js";
-import fetch from "node-fetch";
-import { Response } from "node-fetch";
+import { createGitHubError } from "./errors";
+import { VERSION } from "./version";
 
 type RequestOptions = {
   method?: string;
@@ -28,7 +25,7 @@ export function buildUrl(baseUrl: string, params: Record<string, string | number
   return url.toString();
 }
 
-const USER_AGENT = `modelcontextprotocol/servers/github/v${VERSION} ${getUserAgent()}`;
+const USER_AGENT = `modelcontextprotocol/servers/github/v${VERSION}`;
 
 export async function githubRequest(
   url: string,
@@ -44,6 +41,13 @@ export async function githubRequest(
   if (process.env.GITHUB_PERSONAL_ACCESS_TOKEN) {
     headers["Authorization"] = `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`;
   }
+
+  console.log("Making GitHub API request:", {
+    method: options.method || "GET",
+    url,
+    headers,
+    body: options.body,
+  });
 
   const response = await fetch(url, {
     method: options.method || "GET",

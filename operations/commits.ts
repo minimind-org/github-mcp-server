@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { githubRequest, buildUrl } from "../common/utils.js";
+import { githubRequest, buildUrl } from "../common/utils";
 
 export const ListCommitsSchema = z.object({
   owner: z.string(),
