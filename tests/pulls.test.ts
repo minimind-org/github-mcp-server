@@ -2,9 +2,9 @@ import { getPullRequest } from "../operations/pulls";
 
 
 describe('getPullRequest', () => {
-  const owner = 'bitlydev';
-  const repo = 'otc-otc';
-  const pullNumber = 114;
+  const owner = 'minimind-org';
+  const repo = 'github-mcp-server';
+  const pullNumber = 1;
 
   it('should return pull request data when successful', async () => {
     const result = await getPullRequest(owner, repo, pullNumber);

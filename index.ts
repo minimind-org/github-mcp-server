@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { Server } from "@modelcontextprotocol/sdk/server/index";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio";
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-} from "@modelcontextprotocol/sdk/types";
+} from "@modelcontextprotocol/sdk/types.js";
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
@@ -415,19 +415,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      case "submit_pull_request_review": {
-        const args = pulls.CreatePullRequestReviewSchema.parse(request.params.arguments);
-        const { owner, repo, pull_number, ...options } = args;
-        const review = await pulls.submitPullRequestReview(
-          owner,
-          repo,
-          pull_number,
-          options
-        );
-        return {
-          content: [{ type: "text", text: JSON.stringify(review, null, 2) }],
-        };
-      }
+      // case "submit_pull_request_review": {
+      //   const args = pulls.CreatePullRequestReviewSchema.parse(request.params.arguments);
+      //   const { owner, repo, pull_number, ...options } = args;
+      //   const review = await pulls.submitPullRequestReview(
+      //     owner,
+      //     repo,
+      //     pull_number,
+      //     options
+      //   );
+      //   return {
+      //     content: [{ type: "text", text: JSON.stringify(review, null, 2) }],
+      //   };
+      // }
 
       case "merge_pull_request": {
         const args = pulls.MergePullRequestSchema.parse(request.params.arguments);

@@ -365,6 +365,3 @@ export const SubmitPullRequestReviewSchema = z.object({
     body: z.string().describe("Comment content")
   })).optional().describe("Inline code comments")
 });
-
-const result = getPullRequest("bitlydev", "otc-otc", 113)
-console.log(result);
