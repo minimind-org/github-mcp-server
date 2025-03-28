@@ -161,8 +161,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: zodToJsonSchema(pulls.ListPullRequestsSchema)
       },
       {
-        name: "create_pull_request_review",
-        description: "Create a review on a pull request",
+        name: "comment_on_pull_request",
+        description: "Add a comment to a pull request",
+        inputSchema: zodToJsonSchema(pulls.CommentOnPullRequestSchema)
+      },
+      {
+        name: "submit_pull_request_review",
+        description: "Submit a formal review for a pull request with approval status and comments",
         inputSchema: zodToJsonSchema(pulls.CreatePullRequestReviewSchema)
       },
       {
@@ -397,10 +402,28 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      case "create_pull_request_review": {
+      case "comment_on_pull_request": {
+        const args = pulls.CommentOnPullRequestSchema.parse(request.params.arguments);
+        const comment = await pulls.commentOnPullRequest(
+          args.owner,
+          args.repo,
+          args.pull_number,
+          args.body
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(comment, null, 2) }],
+        };
+      }
+
+      case "submit_pull_request_review": {
         const args = pulls.CreatePullRequestReviewSchema.parse(request.params.arguments);
         const { owner, repo, pull_number, ...options } = args;
-        const review = await pulls.createPullRequestReview(owner, repo, pull_number, options);
+        const review = await pulls.submitPullRequestReview(
+          owner,
+          repo,
+          pull_number,
+          options
+        );
         return {
           content: [{ type: "text", text: JSON.stringify(review, null, 2) }],
         };

@@ -274,6 +274,22 @@ export async function getPullRequestComments(
   return z.array(PullRequestCommentSchema).parse(response);
 }
 
+export async function commentOnPullRequest(
+  owner: string,
+  repo: string,
+  pullNumber: number,
+  body: string
+): Promise<z.infer<typeof PullRequestCommentSchema>> {
+  const response = await githubRequest(
+    `https://api.github.com/repos/${owner}/${repo}/issues/${pullNumber}/comments`,
+    {
+      method: "POST",
+      body: { body },
+    }
+  );
+  return PullRequestCommentSchema.parse(response);
+}
+
 export async function getPullRequestReviews(
   owner: string,
   repo: string,
@@ -283,6 +299,35 @@ export async function getPullRequestReviews(
     `https://api.github.com/repos/${owner}/${repo}/pulls/${pullNumber}/reviews`
   );
   return z.array(PullRequestReviewSchema).parse(response);
+}
+
+// Add this new function below existing status check functions
+export async function submitPullRequestReview(
+  owner: string,
+  repo: string,
+  pullNumber: number,
+  options: {
+    body: string;
+    event: z.infer<typeof CreatePullRequestReviewSchema>['event'];
+    comments?: Array<{
+      path: string;
+      position: number;
+      body: string;
+    }>;
+  }
+): Promise<z.infer<typeof PullRequestReviewSchema>> {
+  const response = await githubRequest(
+    `https://api.github.com/repos/${owner}/${repo}/pulls/${pullNumber}/reviews`,
+    {
+      method: "POST",
+      body: {
+        body: options.body,
+        event: options.event,
+        comments: options.comments,
+      },
+    }
+  );
+  return PullRequestReviewSchema.parse(response);
 }
 
 export async function getPullRequestStatus(
@@ -300,3 +345,26 @@ export async function getPullRequestStatus(
   );
   return CombinedStatusSchema.parse(response);
 }
+
+export const CommentOnPullRequestSchema = z.object({
+  owner: z.string().describe("Repository owner (username or organization)"),
+  repo: z.string().describe("Repository name"),
+  pull_number: z.number().describe("Pull request number"),
+  body: z.string().describe("The comment body text")
+});
+
+export const SubmitPullRequestReviewSchema = z.object({
+  owner: z.string().describe("Repository owner (username or organization)"),
+  repo: z.string().describe("Repository name"),
+  pull_number: z.number().describe("Pull request number"),
+  body: z.string().describe("Main review comment body"),
+  event: z.enum(['APPROVE', 'REQUEST_CHANGES', 'COMMENT']).describe("Review decision"),
+  comments: z.array(z.object({
+    path: z.string().describe("File path being commented on"),
+    position: z.number().describe("Line position in the diff"),
+    body: z.string().describe("Comment content")
+  })).optional().describe("Inline code comments")
+});
+
+const result = getPullRequest("bitlydev", "otc-otc", 113)
+console.log(result);
