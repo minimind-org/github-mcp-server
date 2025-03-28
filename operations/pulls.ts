@@ -307,12 +307,13 @@ export async function submitPullRequestReview(
   repo: string,
   pullNumber: number,
   options: {
-    body: string;
-    event: z.infer<typeof CreatePullRequestReviewSchema>['event'];
+    body?: string;
+    event?: z.infer<typeof CreatePullRequestReviewSchema>['event'];
+    commit_id?: string; // Optional commit ID for the review commen
     comments?: Array<{
-      path: string;
-      position: number;
-      body: string;
+      path?: string;
+      position?: number;
+      body?: string;
     }>;
   }
 ): Promise<z.infer<typeof PullRequestReviewSchema>> {

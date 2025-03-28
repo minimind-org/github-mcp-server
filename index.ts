@@ -27,13 +27,16 @@ import {
 } from './common/errors';
 import { VERSION } from "./common/version";
 
-const server = new Server(
+export const server = new Server(
   {
     name: "github-mcp-server",
     version: VERSION,
   },
   {
     capabilities: {
+      logging: {
+        level: "debug",
+      },
       tools: {},
     },
   }
@@ -415,19 +418,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      // case "submit_pull_request_review": {
-      //   const args = pulls.CreatePullRequestReviewSchema.parse(request.params.arguments);
-      //   const { owner, repo, pull_number, ...options } = args;
-      //   const review = await pulls.submitPullRequestReview(
-      //     owner,
-      //     repo,
-      //     pull_number,
-      //     options
-      //   );
-      //   return {
-      //     content: [{ type: "text", text: JSON.stringify(review, null, 2) }],
-      //   };
-      // }
+      case "submit_pull_request_review": {
+        const args = pulls.CreatePullRequestReviewSchema.parse(request.params.arguments);
+        const { owner, repo, pull_number, ...options } = args;
+        const review = await pulls.submitPullRequestReview(
+          owner,
+          repo,
+          pull_number,
+          options
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(review, null, 2) }],
+        };
+      }
 
       case "merge_pull_request": {
         const args = pulls.MergePullRequestSchema.parse(request.params.arguments);
