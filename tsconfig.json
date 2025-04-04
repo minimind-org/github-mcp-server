@@ -1,20 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "Node16",
-    "moduleResolution": "Node16",
-    "strict": true,
+    "target": "es2020",
+    "module": "CommonJS",
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "outDir": "./dist",
-    "rootDir": "."
+    "rootDir": ".",
+    "sourceMap": true,
+    "moduleResolution": "node", // Important for module resolution
+    "resolveJsonModule": true, // If you need to import JSON files
+    "types": ["node", "jest"]
   },
+
   "include": [
-    "./**/*.ts"
+    "./**/*.ts", "./*"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules", "dist"]
 }

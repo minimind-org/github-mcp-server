@@ -1,21 +1,11 @@
-import { getUserAgent } from "universal-user-agent";
-import { createGitHubError } from "./errors.js";
-import { VERSION } from "./version.js";
-import fetch from "node-fetch";
-import { Response } from "node-fetch";
+import axios from "axios";
+import { createGitHubError } from "./errors";
+import { VERSION } from "./version";
 
 type RequestOptions = {
   method?: string;
   body?: unknown;
   headers?: Record<string, string>;
-}
-
-async function parseResponseBody(response: Response): Promise<unknown> {
-  const contentType = response.headers.get("content-type");
-  if (contentType?.includes("application/json")) {
-    return response.json();
-  }
-  return response.text();
 }
 
 export function buildUrl(baseUrl: string, params: Record<string, string | number | undefined>): string {
@@ -28,7 +18,7 @@ export function buildUrl(baseUrl: string, params: Record<string, string | number
   return url.toString();
 }
 
-const USER_AGENT = `modelcontextprotocol/servers/github/v${VERSION} ${getUserAgent()}`;
+const USER_AGENT = `modelcontextprotocol/servers/github/v${VERSION}`;
 
 export async function githubRequest(
   url: string,
@@ -45,19 +35,21 @@ export async function githubRequest(
     headers["Authorization"] = `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`;
   }
 
-  const response = await fetch(url, {
-    method: options.method || "GET",
-    headers,
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  });
-
-  const responseBody = await parseResponseBody(response);
-
-  if (!response.ok) {
-    throw createGitHubError(response.status, responseBody);
+  try {
+    const response = await axios({
+      method: options.method || "GET",
+      url,
+      headers,
+      data: options.body,
+    });
+    
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw createGitHubError(error.response.status, error.response.data);
+    }
+    throw error;
   }
-
-  return responseBody;
 }
 
 export function validateBranchName(branch: string): string {
